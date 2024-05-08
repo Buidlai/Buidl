@@ -1,2 +1,2 @@
 # Buidl
-Buidl is the first Web3 AI-powered freelancing platform revolutionizing how creators contribute to sustainable solutions.
+The first decentralized marketplace of MVPs with AI-powered collaborative tools for builders.
