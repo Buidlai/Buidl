@@ -5,7 +5,7 @@ import { FaArrowDown } from "react-icons/fa";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { darkTheme } from "@rainbow-me/rainbowkit";
 import { Link } from "react-router-dom";
-
+import { useLocation } from "react-router-dom";
 import { ethers } from "ethers";
 
 import { ICOAddress, ICO_ABI } from "../contracts/launchpad";
@@ -21,7 +21,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 
 const { chains, publicClient } = configureChains(
-  [bscTestnet],
+  [base],
   [
     alchemyProvider({ apiKey: "qVf7pnl78NlUKvDQ4P2mFYmfigvA4D5h" }),
     publicProvider(),
@@ -46,6 +46,18 @@ const Launchpad = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [showMinPrice, setShowMinPrice] = useState(false);
   //   const { openConnectModal } = useConnectModal();
+  const location = useLocation();
+  const [kolCode, setKolCode] = useState("");
+
+  useEffect(() => {
+
+    const searchParams = new URLSearchParams(location.search);
+    const code = searchParams.get("code");
+    if (code) {
+      setKolCode(code);
+    }
+  }, [location]);
+
 
   function checkIsConnected() {
     if (!isConnected) {
@@ -206,8 +218,7 @@ const Launchpad = () => {
 
       logICOContractBalance();
 
-      return () => {
-      };
+      return () => {};
     }, [ICOContract]),
     (
       <WagmiConfig config={wagmiConfig}>
@@ -217,7 +228,7 @@ const Launchpad = () => {
             accentColorForeground: "#131010",
           })}
           chains={chains}>
-          <div className="bg-slate-900 pb-10 h-screen">
+          <div className="bg-slate-900 pb-10 h-screen darker-grotesque">
             <ToastContainer />
             <nav className="flex items-center justify-between md:px-32 px-8 py-5 bg-slate-900">
               <Link to="/">
@@ -233,13 +244,13 @@ const Launchpad = () => {
               </div>
             </nav>
 
-            <div className="text-white border mt-10  rounded-lg  md:w-[35vw] w-[80vw] mx-auto">
+            <div className="text-white border mt-7  rounded-lg  md:w-[35vw] w-[80vw] mx-auto">
               <div className="pt-[5px]">
                 <div className="launchpad--container flex flex-col justify-center items-center">
                   <div className="">
                     <div className="presale--proper md:p-10 p-4 rounded-lg flex flex-col  justify-center items-center relative">
-                      <div className="flex flex-col md:flex-row w-full space-x-6">
-                        <div className="basis-1/2 flex flex-col justify-center items-center green-border p-5 mb-7 rounded-xl w-[350px] mx-auto">
+                      <div className="flex flex-col md:flex-row w-full">
+                        <div className="flex flex-col justify-center items-center green-border p-5 rounded-xl w-[350px] mx-auto">
                           <div>
                             <h1 className="font-bold md:text-xl mb-8 text-2xl text-white">
                               BUIDL PRIVATE SALE
@@ -310,6 +321,7 @@ const Launchpad = () => {
                               </p>
                             )}
                           </div>
+
                           <button
                             type="button"
                             className="text-white md:p-3 p-2  rounded-lg font-semibold text-xl  hover:text-[#131010]
@@ -322,6 +334,9 @@ const Launchpad = () => {
                             disabled={!value.amountIn || !value.amountOut}>
                             {isConnected ? "CONTRIBUTE" : "CONNECT WALLET"}
                           </button>
+                          <div className="code-display mt-2 text-center text-white font-bold">
+                            {kolCode && <p>Invitation Code: {kolCode}</p>}
+                          </div>
                         </div>
                       </div>
                     </div>

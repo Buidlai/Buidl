@@ -8,6 +8,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Launchpad />} />
+        <Route path="/path" element={<Launchpad />} />{" "}
       </Routes>
     </BrowserRouter>
   );
