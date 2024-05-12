@@ -18,10 +18,47 @@ import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import TermsModal from '../Components/TermsModal';
 
+
+const baseSepolia = {
+  id: 84532,
+  network: "base-sepolia",
+  name: "Base sepolia",
+  nativeCurrency: {
+    name: "Base sepolia",
+    symbol: "ETH",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://base-sepolia.blockpi.network/v1/rpc/public"],
+    },
+    public: {
+      http: ["https://base-sepolia.blockpi.network/v1/rpc/public"],
+    },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: "Basescan",
+      url: "https://base-sepolia.blockscout.com",
+    },
+    default: {
+      name: "Basescan",
+      url: "https://base-sepolia.blockscout.com",
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: "0xca11bde05977b3631167028862be2a173976ca11",
+      blockCreated: 1376988,
+    },
+  },
+  testnet: true,
+};
 
 const { chains, publicClient } = configureChains(
-  [base],
+  [baseSepolia],
   [
     alchemyProvider({ apiKey: "qVf7pnl78NlUKvDQ4P2mFYmfigvA4D5h" }),
     publicProvider(),
@@ -41,23 +78,39 @@ const wagmiConfig = createConfig({
 });
 
 const Launchpad = () => {
-  
   const [price, setPrice] = useState(0);
   const [minPrice, setMinPrice] = useState(0);
   const [showMinPrice, setShowMinPrice] = useState(false);
   //   const { openConnectModal } = useConnectModal();
   const location = useLocation();
   const [kolCode, setKolCode] = useState("");
+  const [refLink, setRefLink] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(true);
+
+  const transactionSuccessful = (amount, walletAddress) => {
+    toast(`Successfully contributed ${amount} ETH`);
+    const newRefLink = `https://yourapp.com?ref=${walletAddress}&kol=${kolCode}`;
+    setRefLink(newRefLink);
+    console.log("Referral Link:", newRefLink); // Logging the link to console for testing
+  };
 
   useEffect(() => {
-
     const searchParams = new URLSearchParams(location.search);
-    const code = searchParams.get("code");
-    if (code) {
-      setKolCode(code);
-    }
-  }, [location]);
+    const referrer = searchParams.get("ref");
+    const kol = searchParams.get("kol");
 
+    if (referrer && kol) {
+      console.log(`Referred by wallet: ${referrer} with KOL code: ${kol}`);
+      // I will handle the referral logic here
+    }
+
+    console.log(refLink);
+
+    if (kol) {
+      setKolCode(kol);
+    }
+  }, [location, refLink]);
 
   function checkIsConnected() {
     if (!isConnected) {
@@ -69,7 +122,7 @@ const Launchpad = () => {
     (async () => {
       const price = "30000000000000000";
 
-      const minPrice = "25000000000000000000";
+      const minPrice = "2500000000000";
 
       const priceInETH = ethers.utils.formatEther(price);
       const minPriceInETH = ethers.utils.formatEther(minPrice);
@@ -115,6 +168,16 @@ const Launchpad = () => {
     }
   }
 
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast("Link copied to clipboard!");
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+      toast("Failed to copy link.");
+    }
+  };
+
   useEffect(() => {
     const checkIfWalletIsConnected = async () => {
       if (window.ethereum) {
@@ -141,6 +204,9 @@ const Launchpad = () => {
       const signer = provider.getSigner();
       const contract = new ethers.Contract(ICOAddress, ICO_ABI, signer);
       setICOContract(contract);
+      console.log(signer);
+      console.log(contract);
+      console.log(ICOAddress);
     };
 
     checkIfWalletIsConnected();
@@ -160,43 +226,88 @@ const Launchpad = () => {
     }
   }, []);
 
-
-
-  const transactionSuccessful = (amount) =>
-    toast(`Successfully contributed ${amount} ETH`);
   const transactionFailed = () => toast("Contribution failed!");
 
   async function handleContribution() {
     console.log("Trying to contribute...");
 
-    if (!ICOContract) return console.log("Please Connect Wallet");
+    if (!ICOContract || !isConnected)
+      return console.log("Please Connect Wallet");
     if (value.amountIn < minPrice) {
       setShowMinPrice(true);
       return console.log(`Minimum Contribution is ${minPrice} ETH`);
     }
 
-    const tx = await ICOContract.depositPool("2", "0", {
-      value: ethers.utils.parseEther(value.amountIn.toString()),
-      gasLimit: 250000,
-    });
-    await tx.wait();
+    try {
+      const tx = await ICOContract.depositPool("2", "0", "1234", {
+        value: ethers.utils.parseEther(value.amountIn.toString()),
+        gasLimit: 2500000,
+      });
+      await tx.wait();
 
+      if (tx.hash) {
+        const signer = await ICOContract.signer.getAddress();
+        transactionSuccessful(value.amountIn.toString(), signer);
+      } else {
+        transactionFailed();
+      }
+    } catch (error) {
+      transactionFailed();
+      console.error("Contribution failed", error);
+    }
+  }
+
+  async function initializeAndSetPool(
+    lpToken,
+    offeringToken,
+    startTime,
+    endTime,
+    admin
+  ) {
+    console.log("Initializing...");
+
+    if (!ICOContract) return console.log("Please Connect Wallet");
+    // if (value.amountIn < minPrice) {
+    //   setShowMinPrice(true);
+    //   return console.log(`Minimum Contribution is ${minPrice} ETH`);
+    // }
+
+    // const tx = await ICOContract.initialize(
+    //   lpToken,
+    //   offeringToken,
+    //   startTime,
+    //   endTime,
+    //   admin
+    // );
+    // await tx.wait();
+
+    // if (tx.hash) {
+    //transactionSuccessful(value.amountIn.toString());
+    console.log("setting pool 0");
+
+    const tx = await ICOContract.setPool(
+      "2000000000000000000000",
+      "2000000000000000000",
+      "2000000000000000000000",
+      "0",
+      "false",
+      "0"
+    );
+    await tx.wait();
 
     if (tx.hash) {
       transactionSuccessful(value.amountIn.toString());
-      console.log("contribution succeed");
-    } else {
-      transactionFailed();
-      console.log("Contribution falied");
+      console.log("setting pool 0");
     }
-
+    // } else {
+    //   transactionFailed();
+    //   console.log("Contribution falied");
+    // }
   }
-
 
   const [IDoBalance, setIDoBalance] = useState(0);
 
-  return (
-    useEffect(() => {
+  useEffect(() => {
       const logICOContractBalance = async () => {
         if (ICOContract) {
           console.log("ICOContract Address:", ICOAddress);
@@ -219,7 +330,25 @@ const Launchpad = () => {
       logICOContractBalance();
 
       return () => {};
-    }, [ICOContract]),
+    }, [ICOContract])
+
+  if (!termsAccepted && showTermsModal) {
+    return (
+      <TermsModal
+        onAccept={(accepted) => {
+          if (accepted) {
+            setTermsAccepted(true);
+            setShowTermsModal(false);
+          }
+        }}
+      />
+    );
+  }
+
+  return (
+    
+
+    
     (
       <WagmiConfig config={wagmiConfig}>
         <RainbowKitProvider
@@ -228,7 +357,7 @@ const Launchpad = () => {
             accentColorForeground: "#131010",
           })}
           chains={chains}>
-          <div className="bg-slate-900 pb-10 h-screen darker-grotesque">
+          <div className="bg-slate-900 h-screen pb-10 darker-grotesque">
             <ToastContainer />
             <nav className="flex items-center justify-between md:px-32 px-8 py-5 bg-slate-900">
               <Link to="/">
@@ -244,6 +373,8 @@ const Launchpad = () => {
               </div>
             </nav>
 
+            
+
             <div className="text-white border mt-7  rounded-lg  md:w-[35vw] w-[80vw] mx-auto">
               <div className="pt-[5px]">
                 <div className="launchpad--container flex flex-col justify-center items-center">
@@ -252,7 +383,17 @@ const Launchpad = () => {
                       <div className="flex flex-col md:flex-row w-full">
                         <div className="flex flex-col justify-center items-center green-border p-5 rounded-xl w-[350px] mx-auto">
                           <div>
-                            <h1 className="font-bold md:text-xl mb-8 text-2xl text-white">
+                            <h1
+                              className="font-bold md:text-xl mb-8 text-2xl text-white"
+                              onClick={() => {
+                                initializeAndSetPool(
+                                  "0x0000000000000000000000000000000000000000",
+                                  "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                                  "1715522439",
+                                  "1715525139",
+                                  "0xc4eBB032d6de76c3971F7822928b0db49Bb1fcae"
+                                );
+                              }}>
                               BUIDL PRIVATE SALE
                             </h1>
                           </div>
@@ -325,7 +466,7 @@ const Launchpad = () => {
                           <button
                             type="button"
                             className="text-white md:p-3 p-2  rounded-lg font-semibold text-xl  hover:text-[#131010]
-                                                    duration-300 bg-orange-500 w-64 mt-2  mb-4 hover:cursor-pointer"
+                                                    duration-300 bg-orange-400 w-64 mt-2  mb-4 hover:cursor-pointer"
                             onClick={
                               isConnected
                                 ? handleContribution
@@ -334,8 +475,24 @@ const Launchpad = () => {
                             disabled={!value.amountIn || !value.amountOut}>
                             {isConnected ? "CONTRIBUTE" : "CONNECT WALLET"}
                           </button>
-                          <div className="code-display mt-2 text-center text-white font-bold">
-                            {kolCode && <p>Invitation Code: {kolCode}</p>}
+                          <div className="code-display mt-2 text-center text-white font-bold w-fit">
+                            {kolCode && (
+                              <p className="invitation-code">
+                                Invitation Code: {kolCode}
+                              </p>
+                            )}
+                            {refLink && (
+                              <div className="ref-link-container px-3 text-wrap mt-4">
+                                <p className="ref-link">
+                                  Click to copy Your Ref Link:
+                                </p>
+                                <p
+                                  className="border border-orange-300 p-2 rounded-lg mt-1"
+                                  onClick={() => copyToClipboard(refLink)}>
+                                  {refLink}
+                                </p>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
