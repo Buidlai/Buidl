@@ -376,14 +376,14 @@ const Launchpad = () => {
 
     if (!ICOContract) return console.log("Please Connect Wallet");
 
-    const tx = await ICOContract.initialize(
-      lpToken,
-      offeringToken,
-      startTime,
-      endTime,
-      admin
-    );
-    await tx.wait();
+    // const tx = await ICOContract.initialize(
+    //   lpToken,
+    //   offeringToken,
+    //   startTime,
+    //   endTime,
+    //   admin
+    // );
+    // await tx.wait();
 
     // if (tx.hash) {
     //transactionSuccessful(value.amountIn.toString());
@@ -508,8 +508,8 @@ const Launchpad = () => {
                               initializeAndSetPool(
                                 "0x0000000000000000000000000000000000000000",
                                 "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-                                "1715696319",
-                                "1715685639",
+                                "1715697339",
+                                "1715711739",
                                 "0xc4eBB032d6de76c3971F7822928b0db49Bb1fcae"
                               );
                             }}>
