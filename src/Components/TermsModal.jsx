@@ -25,14 +25,14 @@ const TermsModal = ({ onAccept }) => {
 
       <div className="fixed inset-0 bg-slate-800 px-6 bg-opacity-50 flex justify-center items-center z-50">
         <div
-          className="bg-[#EEA20E] p-4 rounded-lg max-w-md w-full"
+          className="bg-[#EEA20E] p-4 rounded-lg max-w-md w-[90%]"
           style={{ maxHeight: "80vh", overflow: "auto" }}>
-          <h2 className="text-lg font-bold">Terms and Conditions</h2>
+          <h2 className="text-xl font-bold text-center">Disclaimer</h2>
           <div
             className="text-sm mt-2 overflow-y-auto"
             style={{ maxHeight: "50vh" }}>
-            <p className="font-bold mb-2">
-              Please read and accept our terms and conditions to continue.
+            <p className="font-bold mb-2 text-center">
+              Please read and accept disclaimer to continue.
             </p>
             <p className="text-black text-justify">
               All participants must understand that cryptocurrencies involve
