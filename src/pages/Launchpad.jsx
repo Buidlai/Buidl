@@ -376,37 +376,37 @@ const Launchpad = () => {
 
     if (!ICOContract) return console.log("Please Connect Wallet");
 
-    // const tx = await ICOContract.initialize(
-    //   lpToken,
-    //   offeringToken,
-    //   startTime,
-    //   endTime,
-    //   admin
-    // );
-    // await tx.wait();
-
-    // if (tx.hash) {
-    //transactionSuccessful(value.amountIn.toString());
-    console.log("setting pool 0");
-
-    const tx2 = await ICOContract.setPool(
-      "2000000000000000000000",
-      "2000000000000000000",
-      "2000000000000000000000",
-      "0",
-      "false",
-      "0"
+    const tx = await ICOContract.initialize(
+      lpToken,
+      offeringToken,
+      startTime,
+      endTime,
+      admin
     );
-    await tx2.wait();
+    await tx.wait();
 
-    if (tx2.hash) {
+    if (tx.hash) {
       transactionSuccessful(value.amountIn.toString());
-      console.log(" pool 0 set ");
+      console.log("setting pool 0");
+
+      const tx2 = await ICOContract.setPool(
+        "2000000000000000000000",
+        "2000000000000000000",
+        "2000000000000000000000",
+        "0",
+        "false",
+        "0"
+      );
+      await tx2.wait();
+
+      if (tx2.hash) {
+        transactionSuccessful(value.amountIn.toString());
+        console.log(" pool 0 set ");
+      }
+    } else {
+      transactionFailed();
+      console.log("Contribution falied");
     }
-    // } else {
-    //   transactionFailed();
-    //   console.log("Contribution falied");
-    // }
   }
 
   const [IDoBalance, setIDoBalance] = useState(0);
