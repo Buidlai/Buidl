@@ -17,7 +17,7 @@ const TermsModal = ({ onAccept }) => {
           <h1 className="cursor-pointer hover:underline">How it Works</h1>
         </div>
         <div className="flex items-center space-x-6">
-          <button className=" bg-orange-500 font-bold text-white py-2 px-8 rounded-2xl text-lg cursor-pointer">
+          <button className=" bg-[#EEA20E] font-bold text-white py-2 px-8 rounded-2xl text-lg cursor-pointer">
             Connect Wallet
           </button>
         </div>
@@ -25,7 +25,7 @@ const TermsModal = ({ onAccept }) => {
 
       <div className="fixed inset-0 bg-slate-800 px-6 bg-opacity-50 flex justify-center items-center z-50">
         <div
-          className="bg-orange-400 p-4 rounded-lg max-w-md w-full"
+          className="bg-[#EEA20E] p-4 rounded-lg max-w-md w-full"
           style={{ maxHeight: "80vh", overflow: "auto" }}>
           <h2 className="text-lg font-bold">Terms and Conditions</h2>
           <div
@@ -36,17 +36,17 @@ const TermsModal = ({ onAccept }) => {
             </p>
             <p className="text-black text-justify">
               All participants must understand that cryptocurrencies involve
-              substantial risk. we do not guarantee the performance or return on any investments. Users
-              must conduct their own due diligence and consult with financial,
-              legal, and tax professionals before participating in any funding
-              activities.
+              substantial risk. we do not guarantee the performance or return on
+              any investments. Users must conduct their own due diligence and
+              consult with financial, legal, and tax professionals before
+              participating in any funding activities.
               <br />
               <br />
               The regulatory status of cryptographic tokens and blockchain
               technology is unclear or unsettled in many jurisdictions. It is
               your responsibility to ensure that you comply with all relevant
               laws and regulations in your jurisdiction before participating in
-              any project listed on this Platform.
+              this project.
             </p>
           </div>
           <div className="mt-4 flex items-center">

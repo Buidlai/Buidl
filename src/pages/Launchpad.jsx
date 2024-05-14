@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Logo from "../images/logo.png";
 import ethLogo from "../images/ethlogo.svg";
 import { FaArrowDown } from "react-icons/fa";
+import { RiSwapFill } from "react-icons/ri";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { darkTheme } from "@rainbow-me/rainbowkit";
 import { Link } from "react-router-dom";
@@ -88,12 +89,32 @@ const Launchpad = () => {
   const [showTermsModal, setShowTermsModal] = useState(true);
   const [ref, setRef] = useState("");
   const [accRefPoints, setAccRefPoints] = useState("");
+  const [signerAdress, setSignerAddress] = useState("");
+  const [hasParticipated, setHasParticipated] = useState(false);
+
+  const checkParticipationStatus = async () => {
+    if (ICOContract) {
+      //console.log.log(ICOContract);
+      //console.log.log(signerAdress);
+      const tx = await ICOContract.hasParticipated(signerAdress);
+
+      if (tx) {
+        //console.log.log("updating participation state");
+        setHasParticipated(true);
+      }
+
+      //console.log.log({ participated: tx });
+    }
+  };
 
   const transactionSuccessful = (amount, walletAddress) => {
     toast(`Successfully contributed ${amount} ETH`);
-    const newRefLink = `https://yourapp.com?ref=${walletAddress}&kol=${kolCode}`;
+    const newRefLink = `https://private.buidlai.pro/path?ref=${walletAddress}&kol=${kolCode}`;
     setRefLink(newRefLink);
-    console.log("Referral Link:", newRefLink);
+    //console.log("Referral Link:", newRefLink);
+  };
+  const invalidInviteCode = () => {
+    toast(`Invalid Invite Code`);
   };
 
   useEffect(() => {
@@ -102,12 +123,12 @@ const Launchpad = () => {
     const kol = searchParams.get("kol");
 
     if (referrer && kol) {
-      console.log(`Referred by wallet: ${referrer} with KOL code: ${kol}`);
+      //console.log(`Referred by wallet: ${referrer} with KOL code: ${kol}`);
       setRef(referrer);
       // I will handle the referral logic here
     }
 
-    console.log(refLink);
+    //console.log(refLink);
 
     if (kol) {
       setKolCode(kol);
@@ -122,14 +143,16 @@ const Launchpad = () => {
 
   useEffect(() => {
     (async () => {
-      const price = "30000000000000000";
+      const price = "3637500";
 
-      const minPrice = "2500000000000";
+      const minPrice = "30000000000000000";
 
       const priceInETH = ethers.utils.formatEther(price);
       const minPriceInETH = ethers.utils.formatEther(minPrice);
       setPrice(priceInETH);
       setMinPrice(minPriceInETH);
+      //console.log.log({ minPriceInETH });
+      //console.log.log({ minPrice });
     })();
   }, []);
 
@@ -139,20 +162,41 @@ const Launchpad = () => {
   });
   const current = "launchpad";
 
+  // function handleValueChange(e) {
+  //   let { value, name } = e.target;
+  //   const oppositeName = name.includes("amountIn") ? "amountOut" : "amountIn";
+  //   const valueInNumber = Number(value);
+  //   if (valueInNumber <= 0)
+  //     return setValue({ [name]: value, [oppositeName]: "" });
+
+  //   const conversionRate = 1 / price;
+
+  //   if (name === "amountIn") {
+  //     const v2 = Number(conversionRate * valueInNumber).toFixed(8);
+  //     setValue({ amountIn: valueInNumber, amountOut: v2 });
+  //   } else if (name === "amountOut") {
+  //     const v2 = valueInNumber * price;
+  //     setValue({ amountIn: v2, amountOut: valueInNumber });
+  //   }
+  // }
+
   function handleValueChange(e) {
-    let { value, name } = e.target;
-    const oppositeName = name.includes("amountIn") ? "amountOut" : "amountIn";
+    const { value, name } = e.target;
+    const oppositeName = name === "amountIn" ? "amountOut" : "amountIn";
     const valueInNumber = Number(value);
-    if (valueInNumber <= 0)
+
+    if (valueInNumber <= 0) {
       return setValue({ [name]: value, [oppositeName]: "" });
-    const conversionRate = 1 / price;
+    }
+
+    const price = 3637500; // Number of BUIDL tokens per 1 ETH
 
     if (name === "amountIn") {
-      const v2 = Number(conversionRate * valueInNumber).toFixed(8);
-      setValue({ amountIn: valueInNumber, amountOut: v2 });
+      const amountOut = (valueInNumber * price).toFixed(0);
+      setValue({ amountIn: value, amountOut: amountOut });
     } else if (name === "amountOut") {
-      const v2 = valueInNumber * price;
-      setValue({ amountIn: v2, amountOut: valueInNumber });
+      const amountIn = (valueInNumber / price).toFixed(8);
+      setValue({ amountIn: amountIn, amountOut: value });
     }
   }
 
@@ -197,31 +241,38 @@ const Launchpad = () => {
           console.error("Error checking connected accounts:", error);
         }
       } else {
-        console.log("Ethereum object not found, install MetaMask.");
+        //console.log("Ethereum object not found, install MetaMask.");
         setIsConnected(false);
       }
     };
 
     const setupEthereumContract = async (provider) => {
-      console.log("Setting contract");
+      //console.log("Setting contract");
       const signer = provider.getSigner();
       const contract = new ethers.Contract(ICOAddress, ICO_ABI, signer);
 
       try {
         const signerAddress = await signer.getAddress();
-        console.log("Signer Address:", signerAddress);
+        setSignerAddress(signerAddress);
+        //console.log("Signer Address:", signerAddress);
 
         const referralPoints = await contract.referralPoints(signerAddress);
-        console.log("Referral Points:", referralPoints.toString());
-        setAccRefPoints(referralPoints.toString());
+        //console.log("Referral Points:", referralPoints.toString());
+        const formattedRefPoints = ethers.utils.formatEther(
+          referralPoints.toString()
+        );
+        const finalRefPointMul = formattedRefPoints * 1000;
+        //console.log("formattedRefPoints", finalRefPointMul);
+
+        setAccRefPoints(finalRefPointMul.toString());
 
         setICOContract(contract);
       } catch (error) {
         console.error("Error accessing the contract or fetching data:", error);
       }
 
-      console.log(contract);
-      console.log(ICOAddress);
+      //console.log(contract);
+      //console.log(ICOAddress);
     };
 
     checkIfWalletIsConnected();
@@ -239,20 +290,21 @@ const Launchpad = () => {
         }
       });
     }
-  }, []);
+
+    checkParticipationStatus();
+  }, [termsAccepted]);
 
   const transactionFailed = () => toast("Contribution failed!");
 
   async function handleContribution() {
-    console.log("Trying to contribute...");
-    console.log({ ref });
-    console.log({ refLink });
+    //console.log("Trying to contribute...");
+    //console.log({ ref });
+    //console.log({ refLink });
 
-    if (!ICOContract || !isConnected)
-      return console.log("Please Connect Wallet");
+    if (!ICOContract || !isConnected) return; //console.log("Please Connect Wallet");
     if (value.amountIn < minPrice) {
       setShowMinPrice(true);
-      return console.log(`Minimum Contribution is ${minPrice} ETH`);
+      return; //console.log(`Minimum Contribution is ${minPrice} ETH`);
     }
 
     let KOL_CODE;
@@ -270,29 +322,46 @@ const Launchpad = () => {
       REFERRAL = "0x0000000000000000000000000000000000000000";
     }
 
-    try {
-      console.log(
-        "depositing:",
-        value.amountIn,
-        "through:",
-        KOL_CODE,
-        REFERRAL
-      );
-      const tx = await ICOContract.depositPool("2", "0", KOL_CODE, REFERRAL, {
-        value: ethers.utils.parseEther(value.amountIn.toString()),
-        gasLimit: 2500000,
-      });
-      await tx.wait();
+    //console.log(KOL_CODE);
 
-      if (tx.hash) {
-        const signer = await ICOContract.signer.getAddress();
-        transactionSuccessful(value.amountIn.toString(), signer);
-      } else {
+    if (
+      KOL_CODE == 455771 ||
+      KOL_CODE == 604720 ||
+      KOL_CODE == 134765 ||
+      KOL_CODE == 623812 ||
+      KOL_CODE == 454352 ||
+      KOL_CODE == 590237 ||
+      KOL_CODE == 278299 ||
+      KOL_CODE == 399415 ||
+      KOL_CODE == 949250 ||
+      KOL_CODE == 914211
+    ) {
+      try {
+        console.log(
+          "depositing:",
+          value.amountIn,
+          "through:",
+          KOL_CODE,
+          REFERRAL
+        );
+        const tx = await ICOContract.depositPool("2", "0", KOL_CODE, REFERRAL, {
+          value: ethers.utils.parseEther(value.amountIn.toString()),
+          gasLimit: 2500000,
+        });
+        await tx.wait();
+
+        if (tx.hash) {
+          const signer = await ICOContract.signer.getAddress();
+          transactionSuccessful(value.amountIn.toString(), signer);
+        } else {
+          transactionFailed();
+        }
+      } catch (error) {
         transactionFailed();
+        console.error("Contribution failed", error);
       }
-    } catch (error) {
-      transactionFailed();
-      console.error("Contribution failed", error);
+    } else {
+      invalidInviteCode();
     }
   }
 
@@ -306,10 +375,6 @@ const Launchpad = () => {
     console.log("Initializing...");
 
     if (!ICOContract) return console.log("Please Connect Wallet");
-    // if (value.amountIn < minPrice) {
-    //   setShowMinPrice(true);
-    //   return console.log(`Minimum Contribution is ${minPrice} ETH`);
-    // }
 
     const tx = await ICOContract.initialize(
       lpToken,
@@ -349,15 +414,15 @@ const Launchpad = () => {
   useEffect(() => {
     const logICOContractBalance = async () => {
       if (ICOContract) {
-        console.log("ICOContract Address:", ICOAddress);
+        //console.log("ICOContract Address:", ICOAddress);
         try {
           const pprovider = ICOContract.provider;
           const contractAddress = ICOContract.address;
           const balance = await pprovider.getBalance(contractAddress);
-          console.log(
-            "ICOContract ETH Balance:",
-            ethers.utils.formatEther(balance)
-          );
+          // console.log(
+          //   "ICOContract ETH Balance:",
+          //   ethers.utils.formatEther(balance)
+          // );
 
           setIDoBalance(ethers.utils.formatEther(balance));
         } catch (error) {
@@ -388,30 +453,43 @@ const Launchpad = () => {
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider
         theme={darkTheme({
-          accentColor: "#ff9800",
+          accentColor: "#EEA20E",
           accentColorForeground: "#131010",
+          fontStack: "darker-grotesque",
         })}
         chains={chains}>
-        <div className="bg-slate-900 h-screen pb-10 darker-grotesque">
+        <div className="bg-slate-900 h-screen md:h-full pb-10 darker-grotesque">
           <ToastContainer />
           <nav className="flex items-center justify-between md:px-32 px-8 py-5 bg-slate-900">
-            <Link to="/">
+            <a href="https://buidlai.pro/">
               <img src={Logo} alt="" width={60} className="cursor-pointer" />
-            </Link>
+            </a>
             <div className="md:flex text-white space-x-8 font-semibold hidden">
-              <h1 className="cursor-pointer hover:underline">Home</h1>
-              <h1 className="cursor-pointer hover:underline">About</h1>
-              <h1 className="cursor-pointer hover:underline">How it Works</h1>
+              <a
+                href="https://buidlai.pro/"
+                className="cursor-pointer hover:underline">
+                Home
+              </a>
+              <a
+                href="https://buidlai.pro/about.html"
+                className="cursor-pointer hover:underline">
+                About
+              </a>
+              <a
+                href="https://buidlai.pro/how-it-works-founder.html"
+                className="cursor-pointer hover:underline">
+                How it Works
+              </a>
             </div>
             <div className="flex items-center space-x-6">
               <ConnectButton />
             </div>
           </nav>
 
-          <div className="text-white md:w-[35vw] w-[80vw] mx-auto font-semibold text-xl">
+          <div className="text-white md:w-[35vw] w-[80vw] mx-auto font-semibold text-xl ">
             {accRefPoints && (
-              <p className="invitation-code">
-                Accumulated Ref Points: {Number(accRefPoints)}
+              <p className="invitation-code mx-auto text-center">
+                Your Accumulated Ref Points: {Number(accRefPoints)}
               </p>
             )}
           </div>
@@ -430,8 +508,8 @@ const Launchpad = () => {
                               initializeAndSetPool(
                                 "0x0000000000000000000000000000000000000000",
                                 "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-                                "1715553699",
-                                "1715554779",
+                                "1715678679",
+                                "1715685639",
                                 "0xc4eBB032d6de76c3971F7822928b0db49Bb1fcae"
                               );
                             }}>
@@ -464,7 +542,10 @@ const Launchpad = () => {
                             </div>
                           </div>
 
-                          <FaArrowDown className="md:mb-6 mb-6 text-black bg-[#ff9800] rounded-full mx-auto" />
+                          <div className=" bg-[#EEA20E] w-fit p-1 rounded-full mx-auto mb-2">
+                            <RiSwapFill className=" text-slate-900 text-center rounded-full text-2xl " />
+                          </div>
+
                           <div>
                             <div>
                               <h1 className="font-semibold mb-1 text-white md:text-xl">
@@ -491,23 +572,23 @@ const Launchpad = () => {
                           {showMinPrice && (
                             <p className="text-red-400">
                               {" "}
-                              Min Price is {minPrice}
+                              Minimum Purchase: {minPrice} ETH
                             </p>
                           )}
 
                           <br />
-                          {IDoBalance > 0 && (
+                          {/* {IDoBalance > 0 && (
                             <p className="text-green-400">
                               {" "}
                               ETH Raised: {IDoBalance}
-                            </p>
-                          )}
+                            </p>F
+                          )} */}
                         </div>
 
                         <button
                           type="button"
-                          className="text-white md:p-3 p-2  rounded-lg font-semibold text-xl  hover:text-[#131010]
-                                                    duration-300 bg-orange-400 w-64 mt-2  mb-4 hover:cursor-pointer"
+                          className="text-black md:p-3 p-2  rounded-lg font-semibold text-xl  hover:text-white
+                                                    duration-300 bg-[#EEA20E] w-64 mt-2  mb-4 hover:cursor-pointer"
                           onClick={
                             isConnected ? handleContribution : checkIsConnected
                           }
@@ -520,15 +601,27 @@ const Launchpad = () => {
                               Invitation Code: {kolCode}
                             </p>
                           )}
-                          {refLink && (
+                          {/* {refLink && (
                             <div className="ref-link-container px-3 text-wrap mt-4">
                               <p className="ref-link">
                                 Click to copy Your Ref Link:
                               </p>
                               <p
-                                className="border border-orange-300 p-2 rounded-lg mt-1"
+                                className="border border-[#EEA20E] p-2 rounded-lg mt-1"
                                 onClick={() => copyToClipboard(refLink)}>
                                 {refLink}
+                              </p>
+                            </div>
+                          )} */}
+                          {hasParticipated && (
+                            <div className="ref-link-container px-3 text-wrap mt-4">
+                              <p className="ref-link">
+                                Click to copy Your Ref Link:
+                              </p>
+                              <p
+                                className="border text-white border-[#EEA20E] p-2 rounded-lg mt-1"
+                                onClick={() => copyToClipboard(refLink)}>
+                                {`https://private.buidlai.pro/path?ref=${signerAdress}&kol=${kolCode}`}
                               </p>
                             </div>
                           )}
