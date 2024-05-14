@@ -58,7 +58,7 @@ const baseSepolia = {
 };
 
 const { chains, publicClient } = configureChains(
-  [baseSepolia],
+  [base],
   [
     alchemyProvider({ apiKey: "qVf7pnl78NlUKvDQ4P2mFYmfigvA4D5h" }),
     publicProvider(),
@@ -91,6 +91,35 @@ const Launchpad = () => {
   const [accRefPoints, setAccRefPoints] = useState("");
   const [signerAdress, setSignerAddress] = useState("");
   const [hasParticipated, setHasParticipated] = useState(false);
+  const [timeLeft, setTimeLeft] = useState("");
+
+  const startTime = 1715770800;
+  const endTime = 1715943600;
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = Math.floor(Date.now() / 1000);
+      const timeUntilStart = startTime - now;
+      const timeUntilEnd = endTime - now;
+
+      if (timeUntilStart > 0) {
+        const hours = Math.floor(timeUntilStart / 3600);
+        const minutes = Math.floor((timeUntilStart % 3600) / 60);
+        const seconds = timeUntilStart % 60;
+        setTimeLeft(`Starts in: ${hours}h ${minutes}m ${seconds}s`);
+      } else if (timeUntilEnd > 0) {
+        const hours = Math.floor(timeUntilEnd / 3600);
+        const minutes = Math.floor((timeUntilEnd % 3600) / 60);
+        const seconds = timeUntilEnd % 60;
+        setTimeLeft(`Ends in: ${hours}h ${minutes}m ${seconds}s`);
+      } else {
+        setTimeLeft("Sale has ended");
+        clearInterval(timer);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const checkParticipationStatus = async () => {
     if (ICOContract) {
@@ -337,13 +366,13 @@ const Launchpad = () => {
       KOL_CODE == 914211
     ) {
       try {
-        console.log(
-          "depositing:",
-          value.amountIn,
-          "through:",
-          KOL_CODE,
-          REFERRAL
-        );
+        // console.log(
+        //   "depositing:",
+        //   value.amountIn,
+        //   "through:",
+        //   KOL_CODE,
+        //   REFERRAL
+        // );
         const tx = await ICOContract.depositPool("2", "0", KOL_CODE, REFERRAL, {
           value: ethers.utils.parseEther(value.amountIn.toString()),
           gasLimit: 2500000,
@@ -372,7 +401,7 @@ const Launchpad = () => {
     endTime,
     admin
   ) {
-    console.log("Initializing...");
+    //console.log("Initializing...");
 
     if (!ICOContract) return console.log("Please Connect Wallet");
 
@@ -390,9 +419,9 @@ const Launchpad = () => {
       console.log("setting pool 0");
 
       const tx2 = await ICOContract.setPool(
-        "2000000000000000000000",
-        "2000000000000000000",
-        "2000000000000000000000",
+        "50000000000000000000000000",
+        "0",
+        "7000000000000000000000",
         "0",
         "false",
         "0"
@@ -486,6 +515,18 @@ const Launchpad = () => {
             </div>
           </nav>
 
+          {/* <div className="text-blue-900 underline mb-4 text-center bg-[#EEA20E]  mx-auto">
+            <a href="https://www.orbiter.finance/?source=Ethereum&dest=Base&token=ETH">
+              Brigde ETH to Base
+            </a>
+          </div> */}
+
+          <div className="countdown">
+            <p className="text-black font-semibold w-fit mx-auto px-4 text-center text-xl bg-[#EEA20E] py-2 mb-3">
+              {timeLeft}
+            </p>
+          </div>
+
           <div className="text-white md:w-[35vw] w-[80vw] mx-auto font-semibold text-xl ">
             {accRefPoints && (
               <p className="invitation-code mx-auto text-center">
@@ -502,17 +543,7 @@ const Launchpad = () => {
                     <div className="flex flex-col md:flex-row w-full">
                       <div className="flex flex-col justify-center items-center green-border p-5 rounded-xl w-[350px] mx-auto">
                         <div>
-                          <h1
-                            className="font-bold md:text-xl mb-8 text-2xl text-white"
-                            onClick={() => {
-                              initializeAndSetPool(
-                                "0x0000000000000000000000000000000000000000",
-                                "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-                                "1715697339",
-                                "1715711739",
-                                "0xc4eBB032d6de76c3971F7822928b0db49Bb1fcae"
-                              );
-                            }}>
+                          <h1 className="font-bold md:text-xl mb-8 text-2xl text-white">
                             BUIDL PRIVATE SALE
                           </h1>
                         </div>
