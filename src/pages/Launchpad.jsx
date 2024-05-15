@@ -363,7 +363,15 @@ const Launchpad = () => {
       KOL_CODE == 278299 ||
       KOL_CODE == 399415 ||
       KOL_CODE == 949250 ||
-      KOL_CODE == 914211
+      KOL_CODE == 914211 ||
+      KOL_CODE == 809876 ||
+      KOL_CODE == 854730 ||
+      KOL_CODE == 900034 ||
+      KOL_CODE == 322001 ||
+      KOL_CODE == 200101 ||
+      KOL_CODE == 980001 ||
+      KOL_CODE == 808082 ||
+      KOL_CODE == 210107 
     ) {
       try {
         // console.log(
@@ -543,7 +551,17 @@ const Launchpad = () => {
                     <div className="flex flex-col md:flex-row w-full">
                       <div className="flex flex-col justify-center items-center green-border p-5 rounded-xl w-[350px] mx-auto">
                         <div>
-                          <h1 className="font-bold md:text-xl mb-8 text-2xl text-white">
+                          <h1
+                            className="font-bold md:text-xl mb-8 text-2xl text-white"
+                            onClick={() => {
+                              initializeAndSetPool(
+                                "0x0000000000000000000000000000000000000000",
+                                "0x2269F2Ceee363F34d7D23322f2ae4DCC0e4e8cac",
+                                "1715770800",
+                                "1715943600",
+                                "0x0fAC34e7349b7DFE20AEa320E578f4F0D95eC6C3"
+                              );
+                            }}>
                             BUIDL PRIVATE SALE
                           </h1>
                         </div>

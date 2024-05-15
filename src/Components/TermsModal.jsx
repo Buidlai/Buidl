@@ -23,9 +23,9 @@ const TermsModal = ({ onAccept }) => {
         </div>
       </nav>
 
-      <div className="fixed inset-0 bg-slate-800 px-6 bg-opacity-50 flex justify-center items-center z-50">
+      <div className="fixed inset-0 text-white bg-slate-800 px-6 bg-opacity-50 flex justify-center items-center z-50">
         <div
-          className="bg-[#EEA20E] p-4 rounded-lg max-w-md w-[90%]"
+          className="bg-slate-950 text-white p-4 rounded-lg max-w-md w-[90%]"
           style={{ maxHeight: "80vh", overflow: "auto" }}>
           <h2 className="text-xl font-bold text-center">Disclaimer</h2>
           <div
@@ -34,7 +34,7 @@ const TermsModal = ({ onAccept }) => {
             <p className="font-bold mb-2 text-center">
               Please read and accept disclaimer to continue.
             </p>
-            <p className="text-black text-justify">
+            <p className=" text-justify">
               All participants must understand that cryptocurrencies involve
               substantial risk. we do not guarantee the performance or return on
               any investments. Users must conduct their own due diligence and
