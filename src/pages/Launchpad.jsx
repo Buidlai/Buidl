@@ -331,10 +331,10 @@ const Launchpad = () => {
     //console.log({ refLink });
 
     if (!ICOContract || !isConnected) return; //console.log("Please Connect Wallet");
-    if (value.amountIn < minPrice) {
-      setShowMinPrice(true);
-      return; //console.log(`Minimum Contribution is ${minPrice} ETH`);
-    }
+    // if (value.amountIn < minPrice) {
+    //   setShowMinPrice(true);
+    //   return; //console.log(`Minimum Contribution is ${minPrice} ETH`);
+    // }
 
     let KOL_CODE;
 
@@ -353,52 +353,29 @@ const Launchpad = () => {
 
     //console.log(KOL_CODE);
 
-    if (
-      KOL_CODE == 455771 ||
-      KOL_CODE == 604720 ||
-      KOL_CODE == 134765 ||
-      KOL_CODE == 623812 ||
-      KOL_CODE == 454352 ||
-      KOL_CODE == 590237 ||
-      KOL_CODE == 278299 ||
-      KOL_CODE == 399415 ||
-      KOL_CODE == 949250 ||
-      KOL_CODE == 914211 ||
-      KOL_CODE == 809876 ||
-      KOL_CODE == 854730 ||
-      KOL_CODE == 900034 ||
-      KOL_CODE == 322001 ||
-      KOL_CODE == 200101 ||
-      KOL_CODE == 980001 ||
-      KOL_CODE == 808082 ||
-      KOL_CODE == 210107 
-    ) {
-      try {
-        // console.log(
-        //   "depositing:",
-        //   value.amountIn,
-        //   "through:",
-        //   KOL_CODE,
-        //   REFERRAL
-        // );
-        const tx = await ICOContract.depositPool("2", "0", KOL_CODE, REFERRAL, {
-          value: ethers.utils.parseEther(value.amountIn.toString()),
-          gasLimit: 2500000,
-        });
-        await tx.wait();
+    try {
+      // console.log(
+      //   "depositing:",
+      //   value.amountIn,
+      //   "through:",
+      //   KOL_CODE,
+      //   REFERRAL
+      // );
+      const tx = await ICOContract.depositPool("2", "0", KOL_CODE, REFERRAL, {
+        value: ethers.utils.parseEther(value.amountIn.toString()),
+        gasLimit: 2500000,
+      });
+      await tx.wait();
 
-        if (tx.hash) {
-          const signer = await ICOContract.signer.getAddress();
-          transactionSuccessful(value.amountIn.toString(), signer);
-        } else {
-          transactionFailed();
-        }
-      } catch (error) {
+      if (tx.hash) {
+        const signer = await ICOContract.signer.getAddress();
+        transactionSuccessful(value.amountIn.toString(), signer);
+      } else {
         transactionFailed();
-        console.error("Contribution failed", error);
       }
-    } else {
-      invalidInviteCode();
+    } catch (error) {
+      transactionFailed();
+      console.error("Contribution failed", error);
     }
   }
 
