@@ -94,7 +94,7 @@ const Launchpad = () => {
   const [timeLeft, setTimeLeft] = useState("");
 
   const startTime = 1715770800;
-  const endTime = 1715943600;
+  const endTime = 1716243180;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -390,37 +390,33 @@ const Launchpad = () => {
 
     if (!ICOContract) return console.log("Please Connect Wallet");
 
-    const tx = await ICOContract.initialize(
-      lpToken,
-      offeringToken,
-      startTime,
-      endTime,
-      admin
+    // const tx = await ICOContract.initialize(
+    //   lpToken,
+    //   offeringToken,
+    //   startTime,
+    //   endTime,
+    //   admin
+    // );
+    // await tx.wait();
+
+    // if (tx.hash) {
+    //   transactionSuccessful(value.amountIn.toString());
+    //   console.log("setting pool 0");
+
+    const tx2 = await ICOContract.updateStartAndendTimestamps(
+      "1715770800",
+      "1716243180"
     );
-    await tx.wait();
+    await tx2.wait();
 
-    if (tx.hash) {
+    if (tx2.hash) {
       transactionSuccessful(value.amountIn.toString());
-      console.log("setting pool 0");
-
-      const tx2 = await ICOContract.setPool(
-        "50000000000000000000000000",
-        "0",
-        "7000000000000000000000",
-        "0",
-        "false",
-        "0"
-      );
-      await tx2.wait();
-
-      if (tx2.hash) {
-        transactionSuccessful(value.amountIn.toString());
-        console.log(" pool 0 set ");
-      }
-    } else {
-      transactionFailed();
-      console.log("Contribution falied");
+      console.log(" pool 0 set ");
     }
+    // } else {
+    //   transactionFailed();
+    //   console.log("Contribution falied");
+    // }
   }
 
   const [IDoBalance, setIDoBalance] = useState(0);
@@ -507,8 +503,8 @@ const Launchpad = () => {
           </div> */}
 
           <div className="countdown">
-            <p className="text-black font-semibold w-fit mx-auto px-4 text-center text-xl bg-[#EEA20E] py-2 mb-3">
-              {timeLeft}
+            <p className="text-black font-semibold w-fit mx-auto px-14 text-center text-xl bg-[#EEA20E] py-2 mb-3">
+              Sale is Live!
             </p>
           </div>
 
