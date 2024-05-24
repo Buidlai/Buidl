@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Logo from "../images/logo.png";
 import ethLogo from "../images/ethlogo.svg";
-import { FaArrowDown } from "react-icons/fa";
+// import { FaArrowDown } from "react-icons/fa";
 import { RiSwapFill } from "react-icons/ri";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { darkTheme } from "@rainbow-me/rainbowkit";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { ethers } from "ethers";
 
@@ -14,48 +14,48 @@ import { ICOAddress, ICO_ABI } from "../contracts/launchpad";
 import "@rainbow-me/rainbowkit/styles.css";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { mainnet, base, bscTestnet, baseGoerli } from "wagmi/chains";
+import { base } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TermsModal from "../Components/TermsModal";
 
-const baseSepolia = {
-  id: 84532,
-  network: "base-sepolia",
-  name: "Base sepolia",
-  nativeCurrency: {
-    name: "Base sepolia",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://base-sepolia.blockpi.network/v1/rpc/public"],
-    },
-    public: {
-      http: ["https://base-sepolia.blockpi.network/v1/rpc/public"],
-    },
-  },
-  blockExplorers: {
-    etherscan: {
-      name: "Basescan",
-      url: "https://base-sepolia.blockscout.com",
-    },
-    default: {
-      name: "Basescan",
-      url: "https://base-sepolia.blockscout.com",
-    },
-  },
-  contracts: {
-    multicall3: {
-      address: "0xca11bde05977b3631167028862be2a173976ca11",
-      blockCreated: 1376988,
-    },
-  },
-  testnet: true,
-};
+// const baseSepolia = {
+//   id: 84532,
+//   network: "base-sepolia",
+//   name: "Base sepolia",
+//   nativeCurrency: {
+//     name: "Base sepolia",
+//     symbol: "ETH",
+//     decimals: 18,
+//   },
+//   rpcUrls: {
+//     default: {
+//       http: ["https://base-sepolia.blockpi.network/v1/rpc/public"],
+//     },
+//     public: {
+//       http: ["https://base-sepolia.blockpi.network/v1/rpc/public"],
+//     },
+//   },
+//   blockExplorers: {
+//     etherscan: {
+//       name: "Basescan",
+//       url: "https://base-sepolia.blockscout.com",
+//     },
+//     default: {
+//       name: "Basescan",
+//       url: "https://base-sepolia.blockscout.com",
+//     },
+//   },
+//   contracts: {
+//     multicall3: {
+//       address: "0xca11bde05977b3631167028862be2a173976ca11",
+//       blockCreated: 1376988,
+//     },
+//   },
+//   testnet: true,
+// };
 
 const { chains, publicClient } = configureChains(
   [base],
@@ -142,9 +142,9 @@ const Launchpad = () => {
     setRefLink(newRefLink);
     //console.log("Referral Link:", newRefLink);
   };
-  const invalidInviteCode = () => {
-    toast(`Invalid Invite Code`);
-  };
+  // const invalidInviteCode = () => {
+  //   toast(`Invalid Invite Code`);
+  // };
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -189,7 +189,7 @@ const Launchpad = () => {
     amountIn: "",
     amountOut: "",
   });
-  const current = "launchpad";
+  // const current = "launchpad";
 
   // function handleValueChange(e) {
   //   let { value, name } = e.target;
@@ -232,16 +232,16 @@ const Launchpad = () => {
   const [ICOContract, setICOContract] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
 
-  const [isNavOpen, setIsNavOpen] = useState(false);
+  // const [isNavOpen, setIsNavOpen] = useState(false);
 
-  function toggleNav() {
-    if (isNavOpen) {
-      setIsNavOpen(false);
-    }
-    if (!isNavOpen) {
-      setIsNavOpen(true);
-    }
-  }
+  // function toggleNav() {
+  //   if (isNavOpen) {
+  //     setIsNavOpen(false);
+  //   }
+  //   if (!isNavOpen) {
+  //     setIsNavOpen(true);
+  //   }
+  // }
 
   const copyToClipboard = async (text) => {
     try {
@@ -321,7 +321,7 @@ const Launchpad = () => {
     }
 
     checkParticipationStatus();
-  }, [termsAccepted]);
+  }, [termsAccepted, checkParticipationStatus]);
 
   const transactionFailed = () => toast("Contribution failed!");
 
