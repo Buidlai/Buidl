@@ -172,6 +172,7 @@ const Launchpad = () => {
 
   useEffect(() => {
     (async () => {
+      
       const price = "50000";
 
       const minPrice = "30000000000000000";
@@ -321,7 +322,7 @@ const Launchpad = () => {
     }
 
     checkParticipationStatus();
-  }, [termsAccepted, checkParticipationStatus]);
+  }, [termsAccepted]);
 
   const transactionFailed = () => toast("Contribution failed!");
 
@@ -505,7 +506,7 @@ const Launchpad = () => {
 
           <div className="w-fit mx-auto space-x-6 mt-4">
             <a
-              href=""
+              href="#"
               className="text-black font-semibold w-fit mx-auto md:px-14 px-4 text-center text-xl bg-[#EEA20E] py-2 mb-3">
               Sale is Live!
             </a>
