@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect } from "react";
 import Logo from "../images/logo.png";
 import ethLogo from "../images/ethlogo.svg";
