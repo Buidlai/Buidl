@@ -172,7 +172,7 @@ const Launchpad = () => {
 
   useEffect(() => {
     (async () => {
-      const price = "3637500";
+      const price = "50000";
 
       const minPrice = "30000000000000000";
 
@@ -218,7 +218,7 @@ const Launchpad = () => {
       return setValue({ [name]: value, [oppositeName]: "" });
     }
 
-    const price = 3637500; // Number of BUIDL tokens per 1 ETH
+    const price = 50000; // Number of BUIDL tokens per 1 ETH
 
     if (name === "amountIn") {
       const amountOut = (valueInNumber * price).toFixed(0);
@@ -404,15 +404,16 @@ const Launchpad = () => {
     //   console.log("setting pool 0");
 
     const tx2 = await ICOContract.updateStartAndendTimestamps(
-      "1715770800",
-      "1716243180"
+      "1716386109",
+      "1905688509"
     );
     await tx2.wait();
 
     if (tx2.hash) {
       transactionSuccessful(value.amountIn.toString());
-      console.log(" pool 0 set ");
+      console.log(" time updated 0 set ");
     }
+
     // } else {
     //   transactionFailed();
     //   console.log("Contribution falied");
@@ -502,10 +503,17 @@ const Launchpad = () => {
             </a>
           </div> */}
 
-          <div className="countdown">
-            <p className="text-black font-semibold w-fit mx-auto px-14 text-center text-xl bg-[#EEA20E] py-2 mb-3">
+          <div className="w-fit mx-auto space-x-6 mt-4">
+            <a
+              href=""
+              className="text-black font-semibold w-fit mx-auto md:px-14 px-4 text-center text-xl bg-[#EEA20E] py-2 mb-3">
               Sale is Live!
-            </p>
+            </a>
+            <a
+              href="https://doc.buidlai.pro/"
+              className="text-black font-semibold underline hover:brightness-125 duration-300 w-fit mx-auto md:px-14 px-4 text-center text-xl bg-[#EEA20E] py-2 mb-3">
+              Read Docs
+            </a>
           </div>
 
           <div className="text-white md:w-[35vw] w-[80vw] mx-auto font-semibold text-xl ">
