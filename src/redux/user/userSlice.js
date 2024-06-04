@@ -3,12 +3,14 @@ import axios from "axios";
 
 const GET_USER_STATUS = "http://127.0.0.1:8000/user-status/";
 const SIGN_UP_USER = "http://127.0.0.1:8000/signup/";
+const VERIFY_USER = "http://127.0.0.1:8000/activate/";
 
 const initialState = {
   loading: false,
   currentUser: null,
   userStatus: [],
-  error: null
+  error: null,
+  verified: true,
 }
 
 
@@ -36,6 +38,24 @@ export const createUser = createAsyncThunk(
     }
   }
 );
+
+
+export const verifyUser = createAsyncThunk(
+  'verify/verifyUser',
+  async (formData, thunkAPI) => {
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    try {
+      const response = await axios.post(VERIFY_USER, formData, {
+        headers,
+      });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+)
 
 
 // export const getUserStatus = createAsyncThunk('status/getUserStatus', async (_, thunkAPI) => {
@@ -72,6 +92,11 @@ const userSlice = createSlice({
       .addCase(getUserStatus.fulfilled, (state, action) => ({
         ...state,
         userStatus: action.payload,
+      }))
+      .addCase(verifyUser.fulfilled, (state, action) => ({
+        ...state,
+        verified: action.payload,
+        error: null,
       }))
   }
 });
