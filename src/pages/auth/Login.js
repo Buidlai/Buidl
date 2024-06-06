@@ -1,7 +1,9 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch , useSelector} from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import StickyNavbar from "../../components/StickyNavbar";
 import { Container, Form, Row, Button } from "react-bootstrap";
+import { logInUser } from '../../redux/user/userSlice';
 
 import '../../../src/App.css';
 
@@ -10,9 +12,25 @@ import '../../../src/App.css';
 import { Link } from 'react-router-dom';
 
 function Login() {
- 
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const loggedUser = useSelector((state) => state.userStatus.loggedUser);
+  const token = useSelector((state) => state.userStatus.token);
 
-  
+  const handleLogin = (event) => {
+    event.preventDefault();
+    const userData = { username, password };
+    dispatch(logInUser(userData));
+    navigate('/setupprofile');
+  }
+
+  useEffect(() => {
+    if (loggedUser && token) {
+      navigate('/setupprofile');
+    }
+  }, [loggedUser, token, navigate]);
 
   const Sectionstyle = {
     display: "flex",
@@ -57,23 +75,21 @@ function Login() {
 
       <Row>
         <Form.Group style={formdiv}>
-          <Form.Label style={inputheader}>Email Address/ Username</Form.Label>
-          <Form.Control style={inputbody} placeholder="Email address or Username" />
+          <Form.Label style={inputheader}>Username</Form.Label>
+          <Form.Control style={inputbody} placeholder="Username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
           </Form.Group>
       </Row>
 
       <Row>
       <Form.Group style={formdiv}>
           <Form.Label style={inputheader}>Password</Form.Label>
-          <Form.Control style={inputbody} placeholder="Enter Password" />
+          <Form.Control style={inputbody} placeholder="Enter Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           </Form.Group>
           <span style={{color:'#ffffff',fontSize:0.8+'rem',marginTop:1+'rem'}}>Forget Password ? <span style={{color:'#EEA20E', textDecoration: 'underline'}}>Reset here,</span>  </span>
       </Row><br/><br/>
 
       
-      <Link to='/setupprofile'>
-      <Button  style={{width:100+'%',backgroundColor:'#EEA20E',borderColor:'#EEA20E', color:'#222532',fontsize:0.8+'rem',marginBottom:1+'rem'}}>Login</Button>
-      </Link>
+      <Button onClick={handleLogin}  style={{width:100+'%',backgroundColor:'#EEA20E',borderColor:'#EEA20E', color:'#222532',fontsize:0.8+'rem',marginBottom:1+'rem'}}>Login</Button>
     <br/>
     <span style={{color:'#ffffff',fontSize:0.8+'rem'}}>Don't have an Account ? 
     <Link to= '/'>
