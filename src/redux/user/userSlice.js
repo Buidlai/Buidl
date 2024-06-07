@@ -7,7 +7,7 @@ const SIGN_UP_USER = "http://127.0.0.1:8000/signup/";
 const VERIFY_USER = "http://127.0.0.1:8000/activate/";
 const LOGIN_USER = "http://127.0.0.1:8000/login/";
 
-const SECRET_KEY = process.env.ENCRYPT_SECRET_KEY;
+const SECRET_KEY = process.env.REACT_APP_CRYPTO_KEY;
 
 const encryptToken = (token) => {
   return CryptoJS.AES.encrypt(token, SECRET_KEY).toString();
