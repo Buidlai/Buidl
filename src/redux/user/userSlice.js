@@ -6,11 +6,22 @@ const GET_USER_STATUS = "http://127.0.0.1:8000/user-status/";
 const SIGN_UP_USER = "http://127.0.0.1:8000/signup/";
 const VERIFY_USER = "http://127.0.0.1:8000/activate/";
 const LOGIN_USER = "http://127.0.0.1:8000/login/";
+const PERSONAL_INFO_URL = "http://127.0.0.1:8000/login/";
 
 const SECRET_KEY = process.env.REACT_APP_CRYPTO_KEY;
 
 const encryptToken = (token) => {
   return CryptoJS.AES.encrypt(token, SECRET_KEY).toString();
+};
+
+const encryptValue = (value) => {
+  return CryptoJS.AES.encrypt(value, SECRET_KEY).toString();
+};
+
+const decryptValue = (ciphertext) => {
+  const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
+  const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
+  return parseInt(decryptedString, 10);
 };
 
 const decryptToken = (ciphertext) => {
@@ -26,6 +37,14 @@ const getTokenFromSessionStorage = () => {
   return null;
 };
 
+const getIdFromStorage = () => {
+  const encryptValue = sessionStorage.getItem('userId');
+  if (encryptValue) {
+    return decryptValue(encryptValue);
+  }
+  return null;
+}
+
 const initialState = {
   loading: false,
   currentUser: null,
@@ -34,6 +53,7 @@ const initialState = {
   error: null,
   verified: true,
   token: getTokenFromSessionStorage(),
+  userId: getIdFromStorage(),
 }
 
 
@@ -55,9 +75,9 @@ export const createUser = createAsyncThunk(
       const response = await axios.post(SIGN_UP_USER, formData, {
         headers,
       });
-      return response.data; // Assuming your API returns data upon successful user creation
+      return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data); // Handle error and provide rejected value
+      return thunkAPI.rejectWithValue(error.response.data); 
     }
   }
 );
@@ -87,18 +107,17 @@ export const logInUser = createAsyncThunk(
       'Content-Type': 'application/json',
     };
 
-    // const response = await axios.post(LOGIN_USER, userData, {
-    //   headers,
-    // });
-
-    // return response.data;
     try {
       const response = await axios.post(LOGIN_USER, userData, {
         headers,
       });
 
       const token = response.data.token;
+      const userId = response.data.user.id.toString();
+      console.log(userId)
       const encryptedToken = encryptToken(token);
+      const encryptedUserId = encryptValue(userId);
+      sessionStorage.setItem('userId', encryptedUserId);
       sessionStorage.setItem('token', encryptedToken);
 
       return {
@@ -111,18 +130,25 @@ export const logInUser = createAsyncThunk(
   }
 )
 
+export const getPersonalInfo = createAsyncThunk(
+  'user-info/getPersonalInfo',
+  async(userId, { getState, thunkAPI }) => {
+    const state = getState();
+    const authToken = state.user.token || initialState.token;
+    const headers = {
+      Authorization: `Token ${authToken}`,
+    };
+    try {
+      const response = await axios.get(`${PERSONAL_INFO_URL}/${userId}`, { headers });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+
+)
 
 
-
-// export const getUserStatus = createAsyncThunk('status/getUserStatus', async (_, thunkAPI) => {
-//   try {
-//     const response = await axios.get(GET_USER_STATUS);
-//     console.log(response.data);
-//     return response.data;
-//   } catch (error) {
-//     return thunkAPI.rejectWithValue('cannot get status!');
-//   }
-// });
 
 const userSlice = createSlice({
   name: 'userStatus',
@@ -158,6 +184,7 @@ const userSlice = createSlice({
         ...state,
         loggedUser: action.payload.user,
         token: action.payload.token,
+        userId: action.payload.user.id,
         error: null,
       }))
       .addCase(logInUser.rejected, (state, action) => {

@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import countryList from 'react-select-country-list'
+import { useSelector } from "react-redux";
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import ImageUpload from "./ImageUpload";
 import Select from 'react-select';
@@ -9,6 +11,58 @@ import "../../../App.css";
 const animatedComponents = makeAnimated();
 
 function PersonalInfo({ onNext }) {
+  const userKey = useSelector((state) => state.userStatus.userId);
+  const [bio, setBio] = useState('');
+  const [portfolioLink, setPortfolioLink] = useState('');
+  const [country, setCountry] = useState('');
+  const [language, setLanguage] = useState('');
+  const [userId, setUserId] = useState(null);
+
+  const countryOptions = useMemo(() => countryList().getData(), []);
+
+  useEffect(() => {
+    const savedBio = localStorage.getItem('bio');
+    const savedPortfolioLink = localStorage.getItem('portfolioLink');
+    const savedCountry = localStorage.getItem('country');
+    const savedLanguage = localStorage.getItem('language');
+    const savedUserId = localStorage.getItem('userId');
+
+    if (savedBio) setBio(savedBio);
+    if (savedPortfolioLink) setPortfolioLink(savedPortfolioLink);
+    if (savedCountry) setCountry(savedCountry);
+    if (savedLanguage) setLanguage(savedLanguage);
+    if (savedUserId) setUserId(parseInt(savedUserId, 10));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('bio', bio);
+    localStorage.setItem('portfolioLink', portfolioLink);
+    // localStorage.setItem('country', country);
+    localStorage.setItem('language', language);
+    localStorage.setItem('userId', userKey);
+  }, [bio, portfolioLink, country, language, userKey]);
+
+  const handleBioChange = (e) => setBio(e.target.value);
+  const handlePortfolioLinkChange = (e) => setPortfolioLink(e.target.value);
+  // const handleCountryChange = (selectedOption) => setCountry(selectedOption);
+  // const handleCountryChange = (selectedOption) => {
+  //   setCountry(selectedOption);
+  //   const countryLabel = selectedOption.label;
+  //   console.log('Selected country:', countryLabel); 
+
+  //   localStorage.setItem('country', countryLabel);
+  // };
+  const handleCountryChange = country => {
+    setCountry(country)
+    console.log(country);
+    const countryLabel = country.label;
+    console.log(typeof countryLabel);
+    localStorage.setItem('country', countryLabel);
+  }
+  
+  // localStorage.clear()
+
+  const handleLanguageChange = (selectedOptions) => setLanguage(selectedOptions);
 
 
 
@@ -70,29 +124,47 @@ function PersonalInfo({ onNext }) {
       <Form>
       <Form.Group style={formdiv} >
         <Form.Label style={inputheader} >Bio</Form.Label>
-        <Form.Control style={inputbody} placeholder="Write not more than 2 line a bio about yourself, " as="textarea" rows={3} />
+        <Form.Control style={inputbody} placeholder="Write not more than 2 line a bio about yourself, " as="textarea" rows={3} value={bio}
+                onChange={handleBioChange} />
       </Form.Group>
 
      
         <Form.Group style={formdiv}>
           <Form.Label style={inputheader}>Portfolio Link</Form.Label>
-          <Form.Control style={inputbody} placeholder="Enter your portfolio link" />
+          <Form.Control style={inputbody} placeholder="Enter your portfolio link" value={portfolioLink}
+                onChange={handlePortfolioLinkChange} />
           </Form.Group>
 
-          <Form.Group style={formdiv}>
+          <Form.Control style={inputbody} type="hidden" defaultValue={userKey}/>
+          <Form.Group className="mt-5" controlId="formBasicEmail">
+            <Form.Label style={inputheader}>Country</Form.Label>
+            <Select options={countryOptions} value={country} onChange={handleCountryChange} />
+          </Form.Group>
+
+          {/* <Form.Group style={formdiv}>
           <Form.Label style={inputheader}>Country</Form.Label>
           <Form.Control style={inputbody} placeholder="Select Country" />
-          </Form.Group>
+          
+          </Form.Group> */}
+
+
+            
 
           <Form.Group style={formdiv}>
-          <Form.Label style={inputheader}>anguage</Form.Label>
-          <Select
-      closeMenuOnSelect={false}
-      components={animatedComponents}
-      defaultValue="select language"
-      isMulti
-      options={options}
-    />
+                  {/* <Form.Label style={inputheader} value={language}
+                        onChange={handleLanguageChange}>Language</Form.Label> */}
+                  {/* <Select
+              closeMenuOnSelect={false}
+              components={animatedComponents}
+              defaultValue="select language"
+              isMulti
+              options={options}
+            /> */}
+          </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label style={inputheader} value={language}>Language(Your Primary language)e.g English, French</Form.Label>
+            <Form.Control type="text" style={inputbody} placeholder="English" onChange={handleLanguageChange} />
           </Form.Group>
 
 

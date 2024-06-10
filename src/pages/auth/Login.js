@@ -23,7 +23,6 @@ function Login() {
     event.preventDefault();
     const userData = { username, password };
     dispatch(logInUser(userData));
-    navigate('/setupprofile');
   }
 
   useEffect(() => {

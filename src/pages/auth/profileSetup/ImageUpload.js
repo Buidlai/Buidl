@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import avater from '../../../assets/avater.svg'
 import uploadicon from '../../../assets/uploadicon.svg';
 
 function ImageUpload() {
   const [image, setImage] = useState(null);
 
+  useEffect(() => {
+    const savedImage = localStorage.getItem('image');
+    if (savedImage) {
+      setImage(savedImage);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (image) {
+      localStorage.setItem('image', image);
+    }
+  }, [image]);
   // Function to handle when a file is selected
   const handleImageChange = (e) => {
     const selectedImage = e.target.files[0];
     // Validate selected file (optional)
+    // if (selectedImage) {
+    //   setImage(URL.createObjectURL(selectedImage));
+    // }
     if (selectedImage) {
-      setImage(URL.createObjectURL(selectedImage));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result);
+      };
+      reader.readAsDataURL(selectedImage);
     }
   };
 
