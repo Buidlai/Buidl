@@ -10,6 +10,23 @@ import StickyNavbar from '../../../components/StickyNavbar';
 
 import '../../../App.css';
 
+const dataURLtoBlob = (dataurl) => {
+  const arr = dataurl.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new Blob([u8arr], { type: mime });
+};
+
+const jsonToFile = (json) => {
+  const blob = new Blob([json], { type: json.type });
+  return new File([blob], json.name, { type: json.type });
+};
+
 function ProfileSetup() {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
@@ -32,22 +49,24 @@ function ProfileSetup() {
     formData.append('user', localStorage.getItem('userId'));
     formData.append('language', localStorage.getItem('language'));
     formData.append('professional_role', localStorage.getItem('role'));
-    formData.append('picture', localStorage.getItem('image'));
-    formData.append('resume', localStorage.getItem('resumeFile'));
-    // const resumeFileData = localStorage.getItem('resumeFile');
-    // if (resumeFileData) {
-    //   formData.append('resume', resumeFileData, 'resume.pdf'); // Append the Blob directly to formData
-    // }
-      // In your handleSubmit function:
-    // const resumeFileData = localStorage.getItem('resumeFile');
-    // if (resumeFileData) {
-    //   // Convert Base64 string back to Blob object
-    //   const resumeBlob = dataURLtoBlob(resumeFileData);
+    // formData.append('picture', localStorage.getItem('image'));
+    // formData.append('resume', localStorage.getItem('resumeFile'));
+    // Convert JSON string back to File object for picture
+    const imageData = localStorage.getItem('image');
+    if (imageData) {
+      const imageBlob = dataURLtoBlob(imageData);
+      formData.append('picture', imageBlob, 'profile_picture.jpg');
+    }
+
+    // Convert JSON string back to File object for resume
+    const resumeData = localStorage.getItem('resumeFile');
+    if (resumeData) {
+      const resumeJson = JSON.parse(resumeData);
+      const resumeFile = jsonToFile(resumeJson);
+      formData.append('resume', resumeFile);
+    }
+
     
-    //   // Append the Blob to formData
-    //   formData.append('resume', resumeBlob, 'resume.pdf');
-    // }
-    // dispatch(createPersonalInfo(formData));
    
     console.log("Dispatching createPersonalInfo with formData:", formData);
     dispatch(createPersonalInfo(formData))
