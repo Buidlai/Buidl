@@ -54,15 +54,13 @@ function PersonalInfo({ onNext }) {
   // };
   const handleCountryChange = country => {
     setCountry(country)
-    console.log(country);
     const countryLabel = country.label;
-    console.log(typeof countryLabel);
     localStorage.setItem('country', countryLabel);
   }
   
   // localStorage.clear()
 
-  const handleLanguageChange = (selectedOptions) => setLanguage(selectedOptions);
+  const handleLanguageChange = (e) => setLanguage(e.target.value);
 
 
 
@@ -164,7 +162,7 @@ function PersonalInfo({ onNext }) {
 
             <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label style={inputheader} value={language}>Language(Your Primary language)e.g English, French</Form.Label>
-            <Form.Control type="text" style={inputbody} placeholder="English" onChange={handleLanguageChange} />
+            <Form.Control type="text" style={inputbody} placeholder="" onChange={handleLanguageChange} />
           </Form.Group>
 
 

@@ -20,10 +20,7 @@ function ImageUpload() {
   // Function to handle when a file is selected
   const handleImageChange = (e) => {
     const selectedImage = e.target.files[0];
-    // Validate selected file (optional)
-    // if (selectedImage) {
-    //   setImage(URL.createObjectURL(selectedImage));
-    // }
+    
     if (selectedImage) {
       const reader = new FileReader();
       reader.onloadend = () => {

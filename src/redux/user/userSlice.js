@@ -6,7 +6,7 @@ const GET_USER_STATUS = "http://127.0.0.1:8000/user-status/";
 const SIGN_UP_USER = "http://127.0.0.1:8000/signup/";
 const VERIFY_USER = "http://127.0.0.1:8000/activate/";
 const LOGIN_USER = "http://127.0.0.1:8000/login/";
-const PERSONAL_INFO_URL = "http://127.0.0.1:8000/login/";
+const CREATE_PERSONAL_INFO_URL = "http://127.0.0.1:8000/personal-info/";
 
 const SECRET_KEY = process.env.REACT_APP_CRYPTO_KEY;
 
@@ -49,6 +49,7 @@ const initialState = {
   loading: false,
   currentUser: null,
   loggedUser: null,
+  personalInfo: null,
   userStatus: [],
   error: null,
   verified: true,
@@ -139,13 +140,45 @@ export const getPersonalInfo = createAsyncThunk(
       Authorization: `Token ${authToken}`,
     };
     try {
-      const response = await axios.get(`${PERSONAL_INFO_URL}/${userId}`, { headers });
+      const response = await axios.get(`${CREATE_PERSONAL_INFO_URL}/${userId}`, { headers });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 
+)
+
+const seeToken = () => {
+  const authToken = initialState.token;
+  console.log(authToken);
+}
+
+seeToken();
+
+export const createPersonalInfo = createAsyncThunk(
+  'user-info/createPersonalInfo',
+  async (formData, {thunkAPI}) => {
+    const authToken = initialState.token;
+    console.log("authToken:", authToken);
+    if (!authToken) {
+      console.error('Token not found');
+      return thunkAPI.rejectWithValue('Token not found');
+    }
+    try {
+      const response = await axios.post(CREATE_PERSONAL_INFO_URL, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Token ${authToken}`,
+        },
+      });
+      console.log('personal ran');
+      return response.data;
+    } catch (error) {
+      console.log('error ran')
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
 )
 
 
@@ -190,7 +223,17 @@ const userSlice = createSlice({
       .addCase(logInUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+      .addCase(createPersonalInfo.fulfilled, (state, action) => ({
+        ...state,
+        personalInfo: action.payload,
+        error: null,
+      }))
+      .addCase(createPersonalInfo.rejected, (state, action) => ({
+        ...state,
+        loading:false,
+        error: action.error.message,
+      }))
   }
 });
 
