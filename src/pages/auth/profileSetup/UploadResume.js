@@ -25,13 +25,6 @@ function UploadResume() {
 
   const [file, setFile] = useState(null);
 
-
-
-  // useEffect(() => {
-  //   if (file) {
-  //     localStorage.setItem('resumeFile', JSON.stringify(file));
-  //   }
-  // }, [file]);
   useEffect(() => {
     if (file) {
       const fileData = {
@@ -62,18 +55,11 @@ function UploadResume() {
         lastModified: file.lastModified,
       };
 
-      console.log("File Data:", fileData); // Debugging: Log the file data
       localStorage.setItem('resumeFile', JSON.stringify(fileData));
-
-      // Verify if localStorage is set correctly
       const storedFile = localStorage.getItem('resumeFile');
-      console.log("Stored File Data:", storedFile); // Debugging: Log stored file data
     }
   }
 
-  // const handleChange = (file) => {
-  //   setFile(file);
-  // };
 
   return (
     <Form.Group style={formdiv}>
