@@ -5,16 +5,15 @@ import '../../../App.css';
 import UploadResume from './UploadResume';
 
 function Resume({ onPrev, onSubmit }) {
-
-    const Sectionstyle = {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        textAlign: "left",
-        width:'100%',
-        paddingBottom:5+'rem',
-      };
+  const Sectionstyle = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    textAlign: "left",
+    width:'100%',
+    paddingBottom:5+'rem',
+    };
    
 
   return (

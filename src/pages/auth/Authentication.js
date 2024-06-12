@@ -1,18 +1,32 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import StickyNavbar from "../../components/StickyNavbar";
-import { Container, Image } from "react-bootstrap";
+import { Container, Image, Button } from "react-bootstrap";
 import "../../../src/App.css";
 import OtpInput from "react-otp-input";
+import { verifyUser } from "../../redux/user/userSlice";
 
 import Authimage from "../../assets/Authimage.svg";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 function Verification() {
   const [otp, setOtp] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handlePaste = (event) => {
     const data = event.clipboardData.getData('text');
     console.log(data);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const token = otp.toString(); // Convert OTP to string
+    const formData = { token }; // Create formData object
+    dispatch(verifyUser(formData)); // Dispatch verifyUser with formData
+    navigate('/login');
+   
   };
   
   
@@ -70,9 +84,9 @@ function Verification() {
           renderSeparator={<span>-</span>}
           renderInput={(props) => <input {...props} />}
         />
-       <Link style={{marginTop:1+'rem'}} to='/login' >
+       <Button style={{marginTop:1+'rem'}}  onClick={handleSubmit}>
         <span style={{cursor:'pointer',color:'#ffffff',textDecoration:'underline',marginTop:4+'rem'}}>proceed</span>
-        </Link>
+        </Button>
       </section>
     </Container>
   );

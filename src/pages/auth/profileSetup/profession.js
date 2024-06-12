@@ -1,33 +1,51 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
 
 import '../../../App.css';
 
 function Profession({ onPrev, onNext }) {
+  const [role, setRole] = useState('');
+  const [skills, setSkills] = useState('');
 
-    const Sectionstyle = {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        textAlign: "left",
-        width:'100%',
-        paddingBottom:5+'rem',
-      };
-      const inputheader = {
-        color:'#ffffff',
-        fontSize:'0.8rem',
-      }
-      const inputbody = {
-        backgroundColor:'#404354',
-        color:'#C8C8C8',
-        borderColor:'#404354',
-        outline: 'none',
-        boxShadow: 'none'
-      }
-      const formdiv = {
-        marginTop: '1.2rem',
-      }
+  useEffect(() => {
+    const savedRole = localStorage.getItem('role');
+    const savedSkills = localStorage.getItem('skills');
+    
+    if (savedRole) setRole(savedRole);
+    if (savedSkills) setSkills(savedSkills);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('role', role);
+    localStorage.setItem('skills', skills);
+  }, [role, skills]);
+
+  const handleRoleChange = (e) => setRole(e.target.value);
+  const handleSkillsChange = (e) => setSkills(e.target.value);
+
+  const Sectionstyle = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    textAlign: "left",
+    width:'100%',
+    paddingBottom:5+'rem',
+  };
+  const inputheader = {
+    color:'#ffffff',
+    fontSize:'0.8rem',
+  }
+  const inputbody = {
+    backgroundColor:'#404354',
+    color:'#C8C8C8',
+    borderColor:'#404354',
+    outline: 'none',
+    boxShadow: 'none'
+  }
+  const formdiv = {
+    marginTop: '1.2rem',
+  }
 
 
 
@@ -62,13 +80,13 @@ function Profession({ onPrev, onNext }) {
 
      
         <Form.Group style={formdiv}>
-          <Form.Label style={inputheader}>Professional Role</Form.Label>
-          <Form.Control style={inputbody} placeholder="Select your Role" />
+          <Form.Label style={inputheader}>Professional Role(e.g Product Manager, Frontend Developer)</Form.Label>
+          <Form.Control style={inputbody} placeholder="Select your Role" value={role} onChange={handleRoleChange}  />
           </Form.Group>
 
           <Form.Group style={formdiv}>
-          <Form.Label style={inputheader}>Skills</Form.Label>
-          <Form.Control style={inputbody} placeholder="Select Skills" />
+          <Form.Label style={inputheader}>Skills(e.g HtMl, Project Management.)To list multiple(Adobe|Figma|web3 etc)</Form.Label>
+          <Form.Control style={inputbody} placeholder="Enter skills" value={skills} onChange={handleSkillsChange}  />
           </Form.Group>
 
         
