@@ -3,7 +3,7 @@ import { useDispatch , useSelector} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import StickyNavbar from "../../components/StickyNavbar";
 import { Container, Form, Row, Button } from "react-bootstrap";
-import { logInUser } from '../../redux/user/userSlice';
+import { logInUser, getPersonalInfo } from '../../redux/user/userSlice';
 
 import '../../../src/App.css';
 
@@ -18,18 +18,60 @@ function Login() {
   const dispatch = useDispatch();
   const loggedUser = useSelector((state) => state.userStatus.loggedUser);
   const token = useSelector((state) => state.userStatus.token);
+  const idUser = useSelector((state) => state.userStatus.userId);
+  console.log(idUser);
+  const personalInfo = useSelector((state) => state.userStatus.personalInfo !== null);
+  console.log(personalInfo);
+  const personalInfoLoading = useSelector((state) => state.userStatus.personalInfoLoading);
+  console.log(personalInfoLoading);
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
     const userData = { username, password };
-    dispatch(logInUser(userData));
+    await dispatch(logInUser(userData));
+    if (loggedUser && token) {
+      dispatch(getPersonalInfo(idUser));
+    }
   }
 
   useEffect(() => {
-    if (loggedUser && token) {
+    if (loggedUser && personalInfo && !personalInfoLoading) {
+      navigate('/maindashboard');
+    } else if (loggedUser && !personalInfoLoading) {
       navigate('/setupprofile');
     }
-  }, [loggedUser, token, navigate]);
+  }, [loggedUser, personalInfo, personalInfoLoading, navigate]);
+
+  // const handleLogin = (event) => {
+  //   event.preventDefault();
+  //   const userData = { username, password };
+  //   dispatch(logInUser(userData));
+  // }
+
+  // // sessionStorage.clear();
+
+  // useEffect(() => {
+  //   if (loggedUser && token && !personalInfo) {
+  //     dispatch(getPersonalInfo(idUser));
+  //   }
+  // }, [loggedUser, token, idUser, personalInfo, dispatch]);
+
+  // const realPersonInfo = useSelector((state) => state.userStatus.personalInfo);
+  // console.log('next one',realPersonInfo);
+
+  // useEffect(() => {
+  //   if (loggedUser && personalInfo && !personalInfoLoading) {
+  //     navigate('/maindashboard');
+  //   } else if (loggedUser && !personalInfoLoading) {
+  //     navigate('/setupprofile');
+  //   }
+  // }, [loggedUser, personalInfo, personalInfoLoading, navigate]);
+
+  // useEffect(() => {
+  //   if (loggedUser && token) {
+  //     navigate('/setupprofile');
+  //   }
+  // }, [loggedUser, token, navigate]);
 
   const Sectionstyle = {
     display: "flex",
