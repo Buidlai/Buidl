@@ -17,7 +17,6 @@ function Verification() {
 
   const handlePaste = (event) => {
     const data = event.clipboardData.getData('text');
-    console.log(data);
   };
 
   const handleSubmit = (event) => {

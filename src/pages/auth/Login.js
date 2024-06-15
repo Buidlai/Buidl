@@ -19,11 +19,8 @@ function Login() {
   const loggedUser = useSelector((state) => state.userStatus.loggedUser);
   const token = useSelector((state) => state.userStatus.token);
   const idUser = useSelector((state) => state.userStatus.userId);
-  console.log(idUser);
   const personalInfo = useSelector((state) => state.userStatus.personalInfo !== null);
-  console.log(personalInfo);
   const personalInfoLoading = useSelector((state) => state.userStatus.personalInfoLoading);
-  console.log(personalInfoLoading);
 
   const handleLogin = async (event) => {
     event.preventDefault();

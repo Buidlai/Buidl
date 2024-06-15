@@ -70,7 +70,6 @@ function Registration() {
       user_status: userStatus,
       password: password
     };
-    console.log('Ran');
     dispatch(createUser(formData));
     navigate('/verification');
 
