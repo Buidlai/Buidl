@@ -42,13 +42,13 @@ function Login() {
     }
   }, [loggedUser, personalInfo, personalInfoLoading, navigate]);
 
+  // localStorage.clear();
   // const handleLogin = (event) => {
   //   event.preventDefault();
   //   const userData = { username, password };
   //   dispatch(logInUser(userData));
   // }
 
-  // // sessionStorage.clear();
 
   // useEffect(() => {
   //   if (loggedUser && token && !personalInfo) {
