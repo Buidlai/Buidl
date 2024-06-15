@@ -115,7 +115,6 @@ export const logInUser = createAsyncThunk(
       });
 
       const token = response.data.token;
-      console.log(token);
       const userId = response.data.user.id.toString();
       const encryptedToken = encryptToken(token);
       const encryptedUserId = encryptValue(userId);
@@ -139,8 +138,6 @@ export const getPersonalInfo = createAsyncThunk(
   async (idUser, { rejectWithValue }) => {
     const authToken = initialState.token
     const url = `${CREATE_PERSONAL_INFO_URL}${idUser}/`;
-    console.log('URL:', url);
-    console.log('Token to get info:', authToken);
 
     const headers = {
       Authorization: `Token ${authToken}`,
@@ -148,46 +145,18 @@ export const getPersonalInfo = createAsyncThunk(
 
     try {
       const response = await axios.get(url, { headers });
-      console.log(response);
       return response.data;
     } catch (error) {
-      console.error('Error fetching personal info:', error.response?.data || error.message);
       return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
-
-// export const getPersonalInfo = createAsyncThunk(
-//   'user-info/getPersonalInfo',
-//   console.log('getaction ran'),
-//   async(idUser, { thunkAPI }) => {
-//     // const state = getState();
-//     const authToken = initialState.token;
-//     const url = `${CREATE_PERSONAL_INFO_URL}${idUser}`;
-//     console.log('URL:', url);
-//     console.log('Token to get info', authToken)
-//     const headers = {
-//       Authorization: `Token ${authToken}`,
-//     };
-//     try {
-//       const response = await axios.get(url, { headers });
-//       console.log(response)
-//       return response.data;
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response.data);
-//     }
-//   }
-
-// )
-
 export const createPersonalInfo = createAsyncThunk(
   'user-info/createPersonalInfo',
   async (formData, {thunkAPI}) => {
     const authToken = initialState.token;
-    console.log("authToken:", authToken);
     if (!authToken) {
-      console.error('Token not found');
       return thunkAPI.rejectWithValue('Token not found');
     }
     try {
@@ -197,10 +166,8 @@ export const createPersonalInfo = createAsyncThunk(
           Authorization: `Token ${authToken}`,
         },
       });
-      console.log('personal ran');
       return response.data;
     } catch (error) {
-      console.log('error ran')
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -271,8 +238,6 @@ const userSlice = createSlice({
         error: null,
       }))
       .addCase(getPersonalInfo.rejected, (state, action) => {
-        console.log('Failed to fetch personal info.');
-        console.log('Error:', action.payload);
         return {
           ...state,
           personalInfoLoading: false,
