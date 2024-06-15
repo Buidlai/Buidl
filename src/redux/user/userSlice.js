@@ -50,6 +50,7 @@ const initialState = {
   currentUser: null,
   loggedUser: null,
   personalInfo: null,
+  personalInfoLoading: false,
   userStatus: [],
   error: null,
   verified: true,
@@ -103,7 +104,7 @@ export const verifyUser = createAsyncThunk(
 
 export const logInUser = createAsyncThunk(
   'user/logInUser',
-  async(userData, thunkAPI) => {
+  async(userData, { dispatch, rejectWithValue }) => {
     const headers = {
       'Content-Type': 'application/json',
     };
@@ -115,54 +116,47 @@ export const logInUser = createAsyncThunk(
 
       const token = response.data.token;
       const userId = response.data.user.id.toString();
-      console.log(userId)
       const encryptedToken = encryptToken(token);
       const encryptedUserId = encryptValue(userId);
       sessionStorage.setItem('userId', encryptedUserId);
       sessionStorage.setItem('token', encryptedToken);
+
+      dispatch(getPersonalInfo(userId));
 
       return {
         ...response.data,
         token: encryptedToken,
       };
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
-)
+);
 
 export const getPersonalInfo = createAsyncThunk(
   'user-info/getPersonalInfo',
-  async(userId, { getState, thunkAPI }) => {
-    const state = getState();
-    const authToken = state.user.token || initialState.token;
+  async (idUser, { rejectWithValue }) => {
+    const authToken = initialState.token
+    const url = `${CREATE_PERSONAL_INFO_URL}${idUser}/`;
+
     const headers = {
       Authorization: `Token ${authToken}`,
     };
+
     try {
-      const response = await axios.get(`${CREATE_PERSONAL_INFO_URL}/${userId}`, { headers });
+      const response = await axios.get(url, { headers });
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
-
-)
-
-const seeToken = () => {
-  const authToken = initialState.token;
-  console.log(authToken);
-}
-
-seeToken();
+);
 
 export const createPersonalInfo = createAsyncThunk(
   'user-info/createPersonalInfo',
   async (formData, {thunkAPI}) => {
     const authToken = initialState.token;
-    console.log("authToken:", authToken);
     if (!authToken) {
-      console.error('Token not found');
       return thunkAPI.rejectWithValue('Token not found');
     }
     try {
@@ -172,10 +166,8 @@ export const createPersonalInfo = createAsyncThunk(
           Authorization: `Token ${authToken}`,
         },
       });
-      console.log('personal ran');
       return response.data;
     } catch (error) {
-      console.log('error ran')
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -234,6 +226,29 @@ const userSlice = createSlice({
         loading:false,
         error: action.error.message,
       }))
+      .addCase(getPersonalInfo.pending, (state) => ({
+        ...state,
+        personalInfoLoading: true,
+        
+      }))
+      .addCase(getPersonalInfo.fulfilled, (state, action) => ({
+        ...state,
+        personalInfo: action.payload,
+        personalInfoLoading: false,
+        error: null,
+      }))
+      .addCase(getPersonalInfo.rejected, (state, action) => {
+        return {
+          ...state,
+          personalInfoLoading: false,
+          error: action.error.message,
+        };
+      });
+      // .addCase(getPersonalInfo.rejected, (state, action) => ({
+      //   ...state,
+      //   personalInfoLoading: false,
+      //   error: action.error.message,
+      // }))
   }
 });
 

@@ -68,7 +68,6 @@ function ProfileSetup() {
 
     
    
-    console.log("Dispatching createPersonalInfo with formData:", formData);
     dispatch(createPersonalInfo(formData))
       .then((response) => {
         if (response.error) {

@@ -58,7 +58,6 @@ function PersonalInfo({ onNext }) {
     localStorage.setItem('country', countryLabel);
   }
   
-  // localStorage.clear()
 
   const handleLanguageChange = (e) => setLanguage(e.target.value);
 
