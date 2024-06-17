@@ -9,7 +9,7 @@ import { getPersonalInfo } from '../../../redux/user/userSlice';
 import '../dashboard.css';
 import ModalComponent from './ModalComponent';
 
-const baseUrl = 'http://127.0.0.1:8000';
+const baseUrl = 'https://backend.buidlai.pro';
 
 const CustomNavbar = ({ toggled, setToggled }) => {
 
@@ -27,9 +27,7 @@ const CustomNavbar = ({ toggled, setToggled }) => {
   }, [dispatch, pInfo])
 
   const personInfo = useSelector((state) => state.userStatus.personalInfo);
-  console.log(personInfo);
   const imageUrl = personInfo ? `${baseUrl}${personInfo.picture_url}` : '';
-  console.log(imageUrl);
 
 
 

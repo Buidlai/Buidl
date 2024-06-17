@@ -2,11 +2,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import CryptoJS from "crypto-js";
 
-const GET_USER_STATUS = "http://127.0.0.1:8000/user-status/";
-const SIGN_UP_USER = "http://127.0.0.1:8000/signup/";
-const VERIFY_USER = "http://127.0.0.1:8000/activate/";
-const LOGIN_USER = "http://127.0.0.1:8000/login/";
-const CREATE_PERSONAL_INFO_URL = "http://127.0.0.1:8000/personal-info/";
+const GET_USER_STATUS = "https://backend.buidlai.pro/user-status/";
+const SIGN_UP_USER = "https://backend.buidlai.pro/signup/";
+const VERIFY_USER = "https://backend.buidlai.pro/activate/";
+const LOGIN_USER = "https://backend.buidlai.pro/login/";
+const CREATE_PERSONAL_INFO_URL = "https://backend.buidlai.pro/personal-info/";
 
 const SECRET_KEY = process.env.REACT_APP_CRYPTO_KEY;
 
