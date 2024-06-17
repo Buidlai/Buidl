@@ -56,7 +56,7 @@ function UploadResume() {
       };
 
       localStorage.setItem('resumeFile', JSON.stringify(fileData));
-      const storedFile = localStorage.getItem('resumeFile');
+      // const storedFile = localStorage.getItem('resumeFile');
     }
   }
 

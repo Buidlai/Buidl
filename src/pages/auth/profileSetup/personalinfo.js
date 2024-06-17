@@ -8,7 +8,7 @@ import makeAnimated from 'react-select/animated';
 import "../../../App.css";
 
 
-const animatedComponents = makeAnimated();
+// const animatedComponents = makeAnimated();
 
 function PersonalInfo({ onNext }) {
   const userKey = useSelector((state) => state.userStatus.userId);
@@ -16,6 +16,7 @@ function PersonalInfo({ onNext }) {
   const [portfolioLink, setPortfolioLink] = useState('');
   const [country, setCountry] = useState('');
   const [language, setLanguage] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [userId, setUserId] = useState(null);
 
   const countryOptions = useMemo(() => countryList().getData(), []);
@@ -63,11 +64,11 @@ function PersonalInfo({ onNext }) {
 
 
 
-  const options = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' }
-  ]
+  // const options = [
+  //   { value: 'chocolate', label: 'Chocolate' },
+  //   { value: 'strawberry', label: 'Strawberry' },
+  //   { value: 'vanilla', label: 'Vanilla' }
+  // ]
 
     const Sectionstyle = {
         display: "flex",

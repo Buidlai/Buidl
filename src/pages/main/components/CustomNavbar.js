@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Image, Navbar, Container} from 'react-bootstrap';
 import logo from '../../../assets/logo.svg';
-import profileavater from '../../../assets/profileavater.png';
+// import profileavater from '../../../assets/profileavater.png';
 import hamburger from '../../../assets/hamburger.svg';
 import { getPersonalInfo } from '../../../redux/user/userSlice';
 
