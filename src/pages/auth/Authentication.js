@@ -15,9 +15,9 @@ function Verification() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handlePaste = (event) => {
-    const data = event.clipboardData.getData('text');
-  };
+  // const handlePaste = (event) => {
+  //   const data = event.clipboardData.getData('text');
+  // };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -79,7 +79,7 @@ function Verification() {
           value={otp}
           onChange={setOtp}
           numInputs={4}
-          onPaste={handlePaste}
+          // onPaste={handlePaste}
           renderSeparator={<span>-</span>}
           renderInput={(props) => <input {...props} />}
         />

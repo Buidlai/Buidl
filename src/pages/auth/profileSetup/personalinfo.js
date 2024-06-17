@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import ImageUpload from "./ImageUpload";
 import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
+// import makeAnimated from 'react-select/animated';
 import "../../../App.css";
 
 
