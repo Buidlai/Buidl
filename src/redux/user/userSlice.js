@@ -7,8 +7,14 @@ const SIGN_UP_USER = "https://backend.buidlai.pro/signup/";
 const VERIFY_USER = "https://backend.buidlai.pro/activate/";
 const LOGIN_USER = "https://backend.buidlai.pro/login/";
 const CREATE_PERSONAL_INFO_URL = "https://backend.buidlai.pro/personal-info/";
+// const GET_USER_STATUS = "http://localhost:8000/user-status/";
+// const SIGN_UP_USER = "http://localhost:8000/signup/";
+// const VERIFY_USER = "http://localhost:8000/activate/";
+// const LOGIN_USER = "http://localhost:8000/login/";
+// const CREATE_PERSONAL_INFO_URL = "http://localhost:8000/personal-info/";
 
-const SECRET_KEY = process.env.REACT_APP_CRYPTO_KEY;
+// const SECRET_KEY = process.env.REACT_APP_CRYPTO_KEY;
+const SECRET_KEY = "say1oaFva0bqzPviXc0d5Y";
 
 const encryptToken = (token) => {
   return CryptoJS.AES.encrypt(token, SECRET_KEY).toString();
