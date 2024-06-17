@@ -1,7 +1,7 @@
 {
   "name": "cranium",
   "version": "0.1.0",
-  "homepage": "./builders.buidlai.pro",
+  "homepage": "./builders.buidlai.pro/build/",
   "private": true,
   "dependencies": {
     "@fullcalendar/core": "^6.1.11",
